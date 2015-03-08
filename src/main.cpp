@@ -1087,17 +1087,18 @@ uint256 static GetOrphanRoot(const CBlockHeader* pblock)
 
 int64 static GetBlockValue(int nHeight, int64 nFees)
 {
-    int64 nSubsidy = 50 * COIN;
+    int64 nSubsidy = 2048 * COIN;
 
-    // Subsidy is cut in half every 840000 blocks, which will occur approximately every 4 years
-    nSubsidy >>= (nHeight / 840000); // Logcoin: 840k blocks in ~4 years
+    // Subsidy is cut in half every 720 blocks, which will occur every 1 day
+    // Should total up to 2,947,680 coin over 10 days.
+    nSubsidy >>= (nHeight / 720); // Logcoin: 144 blocks in 1 day
 
     return nSubsidy + nFees;
 }
 
-static const int64 nTargetTimespan = 3.5 * 24 * 60 * 60; // Logcoin: 3.5 days
-static const int64 nTargetSpacing = 2.5 * 60; // Logcoin: 2.5 minutes
-static const int64 nInterval = nTargetTimespan / nTargetSpacing;
+static const int64 nTargetTimespan = 24 * 60 * 60; // Logcoin: 24 hours
+static const int64 nTargetSpacing = 2 * 60; // Logcoin: 2 minute blocks
+static const int64 nInterval = nTargetTimespan / nTargetSpacing; // retarget every 720 blocks
 
 //
 // minimum amount of work that could possibly be required nTime after
@@ -2779,26 +2780,26 @@ bool InitBlockIndex() {
         //   vMerkleTree: 97ddfbbae6
 
         // Genesis block
-        const char* pszTimestamp = "NY Times 05/Oct/2011 Steve Jobs, Apple’s Visionary, Dies at 56";
+        const char* pszTimestamp = "Doctors pull chopstick from Chinese boy’s brain By Amy Graff on March 6, 2015 10:51 AM";
         CTransaction txNew;
         txNew.vin.resize(1);
         txNew.vout.resize(1);
         txNew.vin[0].scriptSig = CScript() << 486604799 << CBigNum(4) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
-        txNew.vout[0].nValue = 50 * COIN;
+        txNew.vout[0].nValue = 2048 * COIN;
         txNew.vout[0].scriptPubKey = CScript() << ParseHex("040184710fa689ad5023690c80f3a49c8f13f8d45b8c857fbcbc8bc4a8e4d3eb4b10f4d4604fa08dce601aaf0f470216fe1b51850b4acf21b179c45070ac7b03a9") << OP_CHECKSIG;
         CBlock block;
         block.vtx.push_back(txNew);
         block.hashPrevBlock = 0;
         block.hashMerkleRoot = block.BuildMerkleTree();
         block.nVersion = 1;
-        block.nTime    = 1317972665;
+        block.nTime    = 1425710769;
         block.nBits    = 0x1e0ffff0;
-        block.nNonce   = 2084524493;
+        block.nNonce   = 1841437853;
 
         if (fTestNet)
         {
-            block.nTime    = 1317798646;
-            block.nNonce   = 385270584;
+            block.nTime    = 1425710769;
+            block.nNonce   = 114541834;
         }
 
         //// debug print
