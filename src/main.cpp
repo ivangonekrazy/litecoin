@@ -35,7 +35,7 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0x12a765e31ffd4059bada1e25190f6e98c99d9714d334efa41a195a7e7e04bfe2");
+uint256 hashGenesisBlock("0x0a8a7836c6235b0b947793f58f6a48842814aa0d990d8e744710a41e148572bc");
 static CBigNum bnProofOfWorkLimit(~uint256(0) >> 20); // Logcoin: starting difficulty is 1 / 2^12
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -2747,7 +2747,7 @@ bool LoadBlockIndex()
         pchMessageStart[1] = 0xc1;
         pchMessageStart[2] = 0xb7;
         pchMessageStart[3] = 0xdc;
-        hashGenesisBlock = uint256("0xf5ae71e26c74beacc88382716aced69cddf3dffff24f384e1808905e0188f68f");
+        hashGenesisBlock = uint256("0x0a8a7836c6235b0b947793f58f6a48842814aa0d990d8e744710a41e148572bc");
     }
 
     //
@@ -2796,10 +2796,11 @@ bool InitBlockIndex() {
         block.nBits    = 0x1e0ffff0;
         block.nNonce   = 1841437853;
 
+
         if (fTestNet)
         {
             block.nTime    = 1425710769;
-            block.nNonce   = 114541834;
+            block.nNonce   = 114650667;
         }
 
         //// debug print
@@ -2807,9 +2808,39 @@ bool InitBlockIndex() {
         printf("%s\n", hash.ToString().c_str());
         printf("%s\n", hashGenesisBlock.ToString().c_str());
         printf("%s\n", block.hashMerkleRoot.ToString().c_str());
-        assert(block.hashMerkleRoot == uint256("0x97ddfbbae6be97fd6cdf3e7ca13232a3afff2353e29badfab7f73011edd4ced9"));
+        assert(block.hashMerkleRoot == uint256("0x83ac50d0c4c745f8290b3167fb684b053b6d40bccde3a413f9dd11d9dfc7ee0f"));
         block.print();
-        assert(hash == hashGenesisBlock);
+
+        //assert(hash == hashGenesisBlock);
+
+        //2015-03-08 07:42:08 Searching for genesis block...block.nTime = 1425710769
+        //2015-03-08 07:42:49 block.nNonce = 114650667
+        //2015-03-08 07:42:49 block.GetHash = 0a8a7836c6235b0b947793f58f6a48842814aa0d990d8e744710a41e148572bckk
+        if (true && block.GetHash() != hashGenesisBlock) {
+            printf("---- Searching for genesis block...\n");
+            uint256 hashTarget = CBigNum().SetCompact(block.nBits).getuint256();
+            uint256 thash;
+            char scratchpad[SCRYPT_SCRATCHPAD_SIZE];
+    
+            loop {
+                scrypt_1024_1_1_256_sp_generic(BEGIN(block.nVersion), BEGIN(thash), scratchpad);
+    
+                if (thash <= hashTarget) {
+                    break;
+                }
+    
+                ++block.nNonce;
+    
+                if (block.nNonce == 0) {
+                    ++block.nTime;
+                }
+            }
+
+            printf("---- block.nTime = %u \n", block.nTime);
+            printf("---- block.nNonce = %u \n", block.nNonce);
+            printf("---- block.GetHash = %s\n", block.GetHash().ToString().c_str());
+            printf("---- End search.\n");
+        }
 
         // Start new block file
         try {
