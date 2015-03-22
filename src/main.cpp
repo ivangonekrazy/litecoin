@@ -35,7 +35,7 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0x0a8a7836c6235b0b947793f58f6a48842814aa0d990d8e744710a41e148572bc");
+uint256 hashGenesisBlock("0x97f3918fc60ee994700dd18d3815890370bf6428b12ebb31932eb5e7190fd13f");
 static CBigNum bnProofOfWorkLimit(~uint256(0) >> 20); // Logcoin: starting difficulty is 1 / 2^12
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -2792,9 +2792,9 @@ bool InitBlockIndex() {
         block.hashPrevBlock = 0;
         block.hashMerkleRoot = block.BuildMerkleTree();
         block.nVersion = 1;
-        block.nTime    = 1425710769;
+        block.nTime    = 1427002138;
         block.nBits    = 0x1e0ffff0;
-        block.nNonce   = 1841437853;
+        block.nNonce   = 1842155934;
 
 
         if (fTestNet)
@@ -2816,7 +2816,7 @@ bool InitBlockIndex() {
         //2015-03-08 07:42:08 Searching for genesis block...block.nTime = 1425710769
         //2015-03-08 07:42:49 block.nNonce = 114650667
         //2015-03-08 07:42:49 block.GetHash = 0a8a7836c6235b0b947793f58f6a48842814aa0d990d8e744710a41e148572bckk
-        if (true && block.GetHash() != hashGenesisBlock) {
+        if (false && block.GetHash() != hashGenesisBlock) {
             printf("---- Searching for genesis block...\n");
             uint256 hashTarget = CBigNum().SetCompact(block.nBits).getuint256();
             uint256 thash;
